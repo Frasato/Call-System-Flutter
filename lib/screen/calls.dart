@@ -11,6 +11,8 @@ class Calls extends StatefulWidget {
 
 class _CallsState extends State<Calls> {
 
+  String role = "user";
+
   List<Call> calls = [
     Call(
       'Problema na impressora',
@@ -96,15 +98,19 @@ class _CallsState extends State<Calls> {
                     Text(selectedCall!.subtitle, style: const TextStyle(color: lightGreyColor, fontSize: 16),),
                     const SizedBox(height: 20),
                     Text(selectedCall!.details, style: const TextStyle(color: Colors.white, fontSize: 16),),
+                    const SizedBox(height: 10),
+                    Text('ID AnyDesk: ${selectedCall!.anyDeskId}', style: const TextStyle(color: lightGreyColor),),
                     const Spacer(),
-                    ElevatedButton(
-                      onPressed: finishCall,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryYellow,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                      ),
-                      child: const Text('Finish')
-                    ),
+                    role == "admin" ?
+                      ElevatedButton(
+                        onPressed: finishCall,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryYellow,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                        ),
+                        child: const Text('Finish')
+                      )
+                      : Text(selectedCall!.time),
                   ],
                 )
             ),
