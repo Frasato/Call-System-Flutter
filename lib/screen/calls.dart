@@ -1,5 +1,6 @@
 import 'package:estudando_flutter/constants/color.dart';
 import 'package:estudando_flutter/models/call.dart';
+import 'package:estudando_flutter/screen/create.dart';
 import 'package:flutter/material.dart';
 
 class Calls extends StatefulWidget {
@@ -78,6 +79,25 @@ class _CallsState extends State<Calls> {
                       onTap: () => selected(call),
                       child: buildCallItem(call.title, call.subtitle, call.time),
                     )),
+                    const Spacer(),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 30),
+                      height: 35,
+                      width: 35,
+                      decoration: BoxDecoration(
+                        color: primaryYellow,
+                        borderRadius: BorderRadius.circular(5)
+                      ),
+                      child: IconButton(
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Create())
+                          );
+                        },
+                        icon: const Icon(Icons.add), color: greyBackground, iconSize: 20,
+                      ),
+                    ),
                   ],
                 ),
               ),
