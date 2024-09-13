@@ -36,6 +36,15 @@ class _CallsState extends State<Calls> {
     });
   }
 
+  void finishCall(){
+    if(selectedCall != null){
+      setState(() {
+        calls.remove(selectedCall);
+        selectedCall = null;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +98,7 @@ class _CallsState extends State<Calls> {
                     Text(selectedCall!.details, style: const TextStyle(color: Colors.white, fontSize: 16),),
                     const Spacer(),
                     ElevatedButton(
-                      onPressed: (){},
+                      onPressed: finishCall,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryYellow,
                         padding: const EdgeInsets.symmetric(vertical: 15),
