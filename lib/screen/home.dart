@@ -10,6 +10,36 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void _validateInput(){
+    String username = _usernameController.text.trim();
+    String password = _usernameController.text.trim();
+  
+    if(username.isEmpty || password.isEmpty){
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Erro'),
+          content: const Text('Por favor, preencha todos os campos.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }else{
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context)=> const Calls())
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,17 +58,12 @@ class _HomeState extends State<Home> {
                   height: 100,
                 ),
               ),
-              inputField(Icons.person, 'Username'),
-              inputField(Icons.lock, 'Password'),
+              inputField(Icons.person, 'Username', _usernameController),
+              inputField(Icons.lock, 'Password', _passwordController),
               Container(
                 margin: const EdgeInsets.only(top: 20),
                 child: ElevatedButton(
-                  onPressed: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context)=> const Calls())
-                    );
-                  },
+                  onPressed: _validateInput,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryYellow,
                     foregroundColor: Colors.black87,
@@ -54,12 +79,13 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Container inputField(IconData icon, String label) {
+  Container inputField(IconData icon, String label, TextEditingController controller) {
     return Container(
       width: 400,
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
         style: const TextStyle(color: Colors.white),
+        controller: controller,
         decoration: InputDecoration(
           label: Text(label, style: const TextStyle(color: Colors.white),),
           fillColor: greyColor,
