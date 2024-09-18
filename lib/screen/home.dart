@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:estudando_flutter/constants/color.dart';
 import 'package:estudando_flutter/screen/calls.dart';
 import 'package:flutter/material.dart';
@@ -14,29 +16,84 @@ class _HomeState extends State<Home> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  String id = '';
+  String username = '';
+  String role = '';
+
   void _validateInput(){
-    String username = _usernameController.text.trim();
-    String password = _usernameController.text.trim();
+    String username = _usernameController.text.trim().toLowerCase();
+    String password = _passwordController.text.trim().toLowerCase();
   
-    if(username.isEmpty || password.isEmpty){
+    if(username == '' || password == ''){
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Erro'),
+          title: const Text('Erro', style: TextStyle(fontWeight: FontWeight.w600),),
           content: const Text('Por favor, preencha todos os campos.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+              child: const Text('OK', style: TextStyle(color: greyBackground),),
             ),
           ],
         ),
       );
     }else{
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context)=> const Calls())
-      );
+      login(username, password);
+    }
+  }
+
+  Future<void> login(String username, String password) async {
+    final url = Uri.parse('http://localhost:8080/user/login');
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+
+    Map<String, dynamic> body = {
+      'username': username,
+      'password': password,
+    };
+
+    String jsonBody = jsonEncode(body);
+
+    try{
+      final response = await http.post(url, headers: headers, body: jsonBody);
+      if(response.statusCode == 200){
+
+        final responseData = jsonDecode(response.body);
+
+        setState(() {
+          id = responseData['userId'];
+          username = responseData['username'];
+          role = responseData['role'];
+        });
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Calls(id: id, role: role, username: username)
+          )
+        );
+
+      }else{
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Erro', style: TextStyle(fontWeight: FontWeight.w600),),
+            content: const Text('Usuário ou senha incorreto!'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK', style: TextStyle(color: greyBackground),),
+              ),
+            ],
+          ),
+        );
+      }
+
+    }catch(e){
+      print('Error: $e');
     }
   }
 
