@@ -1,9 +1,10 @@
 class Call {
   final String title;
-  final String subtitle;
-  final String time;
-  final String details;
-  final String anyDeskId;
+  final String creationDate;
+  final String sector;
+  final String description;
+  final String whoCalled;
+  final String id;
 
-  Call(this.title, this.subtitle, this.details, this.time, this.anyDeskId);
+  Call(this.title, this.creationDate, this.description, this.id, this.whoCalled, this.sector);
 }
