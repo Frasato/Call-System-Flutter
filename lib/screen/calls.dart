@@ -2,13 +2,19 @@ import 'package:estudando_flutter/constants/color.dart';
 import 'package:estudando_flutter/models/call.dart';
 import 'package:estudando_flutter/screen/create.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Calls extends StatefulWidget {
   final String role;
   final String id;
   final String username;
-  
-  const Calls({super.key, required this.id, required this.role, required this.username});
+
+  const Calls(
+      {super.key,
+      required this.id,
+      required this.role,
+      required this.username});
 
   @override
   State<Calls> createState() => _CallsState();
@@ -19,30 +25,99 @@ class _CallsState extends State<Calls> {
   late String role;
   late String username;
 
+  String callId = '';
+  String creationDate = '';
+  String description = '';
+  String sector = '';
+  String title = '';
+  String whoCalled = '';
+  String userId = '';
+
+  List<Call> calls = [];
+  bool isLoading = true;
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     role = widget.role;
     id = widget.id;
     username = widget.username;
+
+    fetchCalls();
   }
 
-  List<Call> calls = [
-    Call(
-        'Problema na impressora',
-        'Whatsapp | Bebedouro',
-        'Estou tentando imprimir uma nota fiscal, porém, ela não sai e aparece um erro na tela, "trocar toner".',
-        '13/09/2024 9:26:45',
-        '1200394192'),
-    Call(
-        'Tela azul',
-        'Balcão | Severínia',
-        'Acabei e ligar o computador e ele está com uma tela azul.',
-        '12/09/2024 10:43:02',
-        '1304395782'),
-  ];
-
   Call? selectedCall;
+
+  Future<void> fetchCalls() async {
+    try {
+      if(role == 'ADMIN'){
+        final url = Uri.parse('http://localhost:8080/user/all');
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          final utf8Data = utf8.decode(response.bodyBytes);
+          final List<dynamic> responseData = jsonDecode(utf8Data);
+          List<Call> fetchedCalls = [];
+
+          for (var callData in responseData) {
+            Call call = Call(
+              callData['title'],
+              callData['creationDate'],
+              callData['description'],
+              callData['id'],
+              callData['whoCalled'],
+              callData['sector'],
+            );
+
+            fetchedCalls.add(call);
+          }
+
+          setState(() {
+            calls = fetchedCalls;
+            isLoading = false;
+          });
+        } else {
+          throw Exception('Failed to load calls');
+        }
+      }else{
+
+        final url = Uri.parse('http://localhost:8080/user/user/$id');
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          final utf8Data = utf8.decode(response.bodyBytes);
+          final List<dynamic> responseData = jsonDecode(utf8Data);
+          List<Call> fetchedCalls = [];
+
+          for (var callData in responseData) {
+            Call call = Call(
+              callData['title'],
+              callData['creationDate'],
+              callData['description'],
+              callData['id'],
+              callData['whoCalled'],
+              callData['sector'],
+            );
+
+            fetchedCalls.add(call);
+          }
+
+          setState(() {
+            calls = fetchedCalls;
+            isLoading = false;
+          });
+        } else {
+          throw Exception('Failed to load calls');
+        }
+      }
+
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      throw Exception(e);
+    }
+  }
 
   void selected(Call call) {
     setState(() {
@@ -85,8 +160,8 @@ class _CallsState extends State<Calls> {
                         )),
                     ...calls.map((call) => GestureDetector(
                           onTap: () => selected(call),
-                          child: buildCallItem(
-                              call.title, call.subtitle, call.time),
+                          child: buildCallItem(call.title, call.whoCalled,
+                              call.creationDate, role),
                         )),
                     const Spacer(),
                     Row(
@@ -157,24 +232,38 @@ class _CallsState extends State<Calls> {
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold),
                           ),
-                          Text(
-                            selectedCall!.subtitle,
-                            style: const TextStyle(
-                                color: lightGreyColor, fontSize: 16),
+                          Row(
+                            children: [
+                              Text(
+                                selectedCall!.whoCalled,
+                                style: const TextStyle(
+                                    color: lightGreyColor, fontSize: 16),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Text(
+                                '|',
+                                style: TextStyle(color: lightGreyColor),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                selectedCall!.sector,
+                                style: const TextStyle(
+                                    color: lightGreyColor, fontSize: 16),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            selectedCall!.details,
+                            selectedCall!.description,
                             style: const TextStyle(
                                 color: Colors.white, fontSize: 16),
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'ID AnyDesk: ${selectedCall!.anyDeskId}',
-                            style: const TextStyle(color: lightGreyColor),
-                          ),
                           const Spacer(),
-                          role == "admin"
+                          role == "ADMIN"
                               ? ElevatedButton(
                                   onPressed: finishCall,
                                   style: ElevatedButton.styleFrom(
@@ -183,7 +272,7 @@ class _CallsState extends State<Calls> {
                                         vertical: 15),
                                   ),
                                   child: const Text('Finish'))
-                              : Text(selectedCall!.time),
+                              : Text(selectedCall!.creationDate),
                         ],
                       )),
           ),
@@ -193,7 +282,7 @@ class _CallsState extends State<Calls> {
   }
 }
 
-Widget buildCallItem(String title, String subtitle, String time) {
+Widget buildCallItem(String title, String subtitle, String time, String role) {
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 10),
     child: Row(
@@ -210,10 +299,12 @@ Widget buildCallItem(String title, String subtitle, String time) {
               subtitle,
               style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
-            Text(
-              time,
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            )
+            role == 'ADMIN'
+                ? Text(
+                    time,
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  )
+                : const Text(''),
           ],
         ),
       ],
