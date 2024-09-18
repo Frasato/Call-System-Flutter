@@ -22,7 +22,7 @@ class _CreateState extends State<Create> {
               width: 700,
               child: TextField(
                 decoration: InputDecoration(
-                  label: const Text('Problem Name', style: const TextStyle(color: Colors.white),),
+                  label: const Text('Problem Name', style: TextStyle(color: Colors.white),),
                   fillColor: greyColor,
                   filled: true,
                   border: OutlineInputBorder(
@@ -44,7 +44,7 @@ class _CreateState extends State<Create> {
               width: 700,
               child: TextField(
                 decoration: InputDecoration(
-                  label: const Text('Description', style: const TextStyle(color: Colors.white),),
+                  label: const Text('Description', style: TextStyle(color: Colors.white),),
                   fillColor: greyColor,
                   filled: true,
                   border: OutlineInputBorder(
@@ -69,7 +69,7 @@ class _CreateState extends State<Create> {
                   width: 340,
                   child: TextField(
                     decoration: InputDecoration(
-                      label: const Text('Sector', style: const TextStyle(color: Colors.white),),
+                      label: const Text('Sector', style: TextStyle(color: Colors.white),),
                       fillColor: greyColor,
                       filled: true,
                       border: OutlineInputBorder(
@@ -115,7 +115,7 @@ class _CreateState extends State<Create> {
               width: 700,
               child: TextField(
                 decoration: InputDecoration(
-                  label: const Text('AnyDesk ID', style: const TextStyle(color: Colors.white),),
+                  label: const Text('AnyDesk ID', style: TextStyle(color: Colors.white),),
                   fillColor: greyColor,
                   filled: true,
                   border: OutlineInputBorder(
