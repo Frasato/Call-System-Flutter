@@ -180,7 +180,7 @@ class _CallsState extends State<Calls> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const Create()));
+                                      builder: (context) => Create(id: id, username: username,)));
                             },
                             icon: const Icon(Icons.add),
                             color: greyBackground,
