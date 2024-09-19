@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:estudando_flutter/widgets/buttonYellow.dart';
+import 'package:estudando_flutter/widgets/inputField.dart';
 import 'package:http/http.dart' as http;
 import 'package:estudando_flutter/constants/color.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,6 @@ class Create extends StatefulWidget {
 }
 
 class _CreateState extends State<Create> {
-
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _sectorController = TextEditingController();
@@ -23,37 +24,44 @@ class _CreateState extends State<Create> {
   late String username;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     id = widget.id;
     username = widget.username;
   }
 
-  void _validateInputs(){
+  void _validateInputs() {
     String title = _titleController.text.trim();
     String description = _descriptionController.text.trim();
     String sector = _sectorController.text.trim();
 
-    if(title.isEmpty || description.isEmpty || sector.isEmpty){
+    if (title.isEmpty || description.isEmpty || sector.isEmpty) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Erro', style: TextStyle(fontWeight: FontWeight.w600),),
+          title: const Text(
+            'Erro',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           content: const Text('Por favor, preencha todos os campos.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK', style: TextStyle(color: greyBackground),),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: greyBackground),
+              ),
             ),
           ],
         ),
       );
-    }else{
+    } else {
       createCall(title, description, sector);
     }
   }
 
-  Future<void> createCall(String title, String description, String sector) async{
+  Future<void> createCall(
+      String title, String description, String sector) async {
     final url = Uri.parse('http://localhost:8080/user/create/$id');
 
     Map<String, String> headers = {
@@ -69,17 +77,15 @@ class _CreateState extends State<Create> {
 
     String jsonBody = jsonEncode(body);
 
-    try{
-
+    try {
       final response = await http.post(url, headers: headers, body: jsonBody);
-      
-      if(response.statusCode == 200){
+
+      if (response.statusCode == 200) {
         Navigator.pop(context, true);
-      }else{
+      } else {
         throw Exception('Internal server error ${response.statusCode}');
       }
-
-    }catch(e){
+    } catch (e) {
       throw Exception(e);
     }
   }
@@ -95,76 +101,34 @@ class _CreateState extends State<Create> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20, right: 20),
-                  width: 340,
-                  child: TextField(
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                      label: const Text('Problem Name', style: TextStyle(color: Colors.white),),
-                      fillColor: greyColor,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 2.0,
-                          color: primaryYellow,
-                          style: BorderStyle.solid,
-                        ),
-                        borderRadius: BorderRadius.circular(5)
-                      ),
-                      labelStyle: const TextStyle(
-                        fontWeight: FontWeight.w600
-                      ),
-                    ),
-                  )
+                InputField(
+                  controller: _titleController,
+                  icon: Icons.title,
+                  label: 'Titulo',
+                  widthField: 340,
+                  bottomValue: 20,
+                  topValue: 0,
+                  rightValue: 20,
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20),
-                  width: 340,
-                  child: TextField(
-                    controller: _sectorController,
-                    decoration: InputDecoration(
-                      label: const Text('Sector', style: TextStyle(color: Colors.white),),
-                      fillColor: greyColor,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 2.0,
-                          color: primaryYellow,
-                          style: BorderStyle.solid,
-                        ),
-                        borderRadius: BorderRadius.circular(5)
-                      ),
-                      labelStyle: const TextStyle(
-                        fontWeight: FontWeight.w600
-                      ),
-                    ),
-                  )
+                InputField(
+                  controller: _titleController,
+                  icon: Icons.business_outlined,
+                  label: 'Setor',
+                  widthField: 340,
+                  bottomValue: 20,
+                  topValue: 0,
+                  rightValue: 0,
                 ),
               ],
             ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              width: 700,
-              child: TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  label: const Text('Description', style: TextStyle(color: Colors.white),),
-                  fillColor: greyColor,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 2.0,
-                      color: primaryYellow,
-                      style: BorderStyle.solid,
-                    ),
-                    borderRadius: BorderRadius.circular(5)
-                  ),
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w600
-                  ),
-                ),
-              )
+            InputField(
+              controller: _titleController,
+              icon: Icons.short_text,
+              label: 'Descrição',
+              widthField: 700,
+              bottomValue: 20,
+              topValue: 0,
+              rightValue: 0,
             ),
             Center(
               child: Row(
@@ -173,26 +137,21 @@ class _CreateState extends State<Create> {
                   Container(
                     margin: const EdgeInsets.only(right: 20),
                     child: ElevatedButton(
-                      onPressed: (){
+                      onPressed: () {
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        elevation: 0
+                          backgroundColor: Colors.white, elevation: 0),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: greyBackground),
                       ),
-                      child: const Text('Cancel', style: TextStyle(color: greyBackground),),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(right: 20),
-                    child: ElevatedButton(
-                      onPressed: _validateInputs,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryYellow,
-                        elevation: 0
-                      ),
-                      child: const Text('Create', style: TextStyle(color: greyBackground),),
-                    ),
+                  ButtonYellow(
+                    label: 'Create',
+                    onPressed: _validateInputs,
+                    marginTopValue: 0,
                   ),
                 ],
               ),
