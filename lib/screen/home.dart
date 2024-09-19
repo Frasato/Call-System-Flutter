@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:estudando_flutter/widgets/buttonYellow.dart';
+import 'package:estudando_flutter/widgets/inputField.dart';
 import 'package:http/http.dart' as http;
 import 'package:estudando_flutter/constants/color.dart';
 import 'package:estudando_flutter/screen/calls.dart';
@@ -93,7 +95,7 @@ class _HomeState extends State<Home> {
       }
 
     }catch(e){
-      print('Error: $e');
+      throw Exception(e);
     }
   }
 
@@ -115,50 +117,15 @@ class _HomeState extends State<Home> {
                   height: 100,
                 ),
               ),
-              inputField(Icons.person, 'Username', _usernameController),
-              inputField(Icons.lock, 'Password', _passwordController),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                child: ElevatedButton(
-                  onPressed: _validateInput,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryYellow,
-                    foregroundColor: Colors.black87,
-                    elevation: 0.0,
-                  ),
-                  child: const Text('Login'),
-                ),
+              InputField(controller: _usernameController, icon: Icons.person, label: 'Username', widthField: 400, bottomValue: 5, topValue: 5, rightValue: 0,),
+              InputField(controller: _passwordController, icon: Icons.lock, label: 'Password', widthField: 400, bottomValue: 5, topValue: 5, rightValue: 0,),
+              ButtonYellow(
+                label: 'Login',
+                onPressed: _validateInput,
+                marginTopValue: 20,
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Container inputField(IconData icon, String label, TextEditingController controller) {
-    return Container(
-      width: 400,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: TextField(
-        style: const TextStyle(color: Colors.white),
-        controller: controller,
-        decoration: InputDecoration(
-          label: Text(label, style: const TextStyle(color: Colors.white),),
-          fillColor: greyColor,
-          filled: true,
-          border: OutlineInputBorder(
-            borderSide: const BorderSide(
-              width: 2.0,
-              color: primaryYellow,
-              style: BorderStyle.solid,
-            ),
-            borderRadius: BorderRadius.circular(5)
-          ),
-          labelStyle: const TextStyle(
-            fontWeight: FontWeight.w600
-          ),
-          prefixIcon: Icon(icon, color: lightGreyColor,),
         ),
       ),
     );
