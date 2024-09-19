@@ -50,7 +50,7 @@ class _CallsState extends State<Calls> {
 
   Future<void> fetchCalls() async {
     try {
-      if(role == 'ADMIN'){
+      if (role == 'ADMIN') {
         final url = Uri.parse('http://localhost:8080/user/all');
         final response = await http.get(url);
 
@@ -79,8 +79,7 @@ class _CallsState extends State<Calls> {
         } else {
           throw Exception('Failed to load calls');
         }
-      }else{
-
+      } else {
         final url = Uri.parse('http://localhost:8080/user/user/$id');
         final response = await http.get(url);
 
@@ -110,7 +109,6 @@ class _CallsState extends State<Calls> {
           throw Exception('Failed to load calls');
         }
       }
-
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -119,17 +117,79 @@ class _CallsState extends State<Calls> {
     }
   }
 
+  Future<void> deleteCall() async {
+    final url = Uri.parse('http://localhost:8080/user/delete/$callId');
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+
+    Map<String, dynamic> body = {
+      'title': title,
+      'description': description,
+      'sector': sector,
+      'whoCalled': whoCalled,
+      'creationDate': creationDate,
+    };
+
+    String jsonBody = jsonEncode(body);
+
+    try {
+      final response = await http.post(url, headers: headers, body: jsonBody);
+
+      if (response.statusCode == 200) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text(
+              'Boa!',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            content: const Text('Chamado deletado com sucesso!'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(color: greyBackground),
+                ),
+              ),
+            ],
+          ),
+        );
+      } else {
+        throw Exception('Error on delete call');
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   void selected(Call call) {
     setState(() {
       selectedCall = call;
+      callId = call.id;
+      title = call.title;
+      sector = call.sector;
+      whoCalled = call.whoCalled;
+      creationDate = call.creationDate;
+      description = call.description;
     });
   }
 
   void finishCall() {
     if (selectedCall != null) {
+      deleteCall();
+
       setState(() {
         calls.remove(selectedCall);
         selectedCall = null;
+        callId = '';
+        title = '';
+        sector = '';
+        whoCalled = '';
+        creationDate = '';
+        description = '';
       });
     }
   }
@@ -176,11 +236,20 @@ class _CallsState extends State<Calls> {
                               color: primaryYellow,
                               borderRadius: BorderRadius.circular(5)),
                           child: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Create(id: id, username: username,)));
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Create(
+                                    id: id,
+                                    username: username,
+                                  ),
+                                ),
+                              );
+
+                              if(result == true){
+                                fetchCalls();
+                              }
                             },
                             icon: const Icon(Icons.add),
                             color: greyBackground,
