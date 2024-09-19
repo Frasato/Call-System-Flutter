@@ -1,6 +1,9 @@
 import 'package:estudando_flutter/constants/color.dart';
 import 'package:estudando_flutter/models/call.dart';
 import 'package:estudando_flutter/screen/create.dart';
+import 'package:estudando_flutter/widgets/callItem.dart';
+import 'package:estudando_flutter/widgets/item.dart';
+import 'package:estudando_flutter/widgets/logoutButton.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -220,8 +223,11 @@ class _CallsState extends State<Calls> {
                         )),
                     ...calls.map((call) => GestureDetector(
                           onTap: () => selected(call),
-                          child: buildCallItem(call.title, call.whoCalled,
-                              call.creationDate, role),
+                          child: CallItem(
+                              title: call.title,
+                              username: call.whoCalled,
+                              time: call.creationDate,
+                              role: role),
                         )),
                     const Spacer(),
                     Row(
@@ -247,7 +253,7 @@ class _CallsState extends State<Calls> {
                                 ),
                               );
 
-                              if(result == true){
+                              if (result == true) {
                                 fetchCalls();
                               }
                             },
@@ -256,22 +262,7 @@ class _CallsState extends State<Calls> {
                             iconSize: 20,
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 30, left: 40),
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text(
-                              'Logout',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  decorationColor: Colors.white,
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 16),
-                            ),
-                          ),
-                        ),
+                        const LogoutButton(),
                       ],
                     ),
                   ],
@@ -291,92 +282,18 @@ class _CallsState extends State<Calls> {
                           style: TextStyle(color: Colors.white),
                         ),
                       )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            selectedCall!.title,
-                            style: const TextStyle(
-                                color: primaryYellow,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                selectedCall!.whoCalled,
-                                style: const TextStyle(
-                                    color: lightGreyColor, fontSize: 16),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Text(
-                                '|',
-                                style: TextStyle(color: lightGreyColor),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                selectedCall!.sector,
-                                style: const TextStyle(
-                                    color: lightGreyColor, fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            selectedCall!.description,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 16),
-                          ),
-                          const Spacer(),
-                          role == "ADMIN"
-                              ? ElevatedButton(
-                                  onPressed: finishCall,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: primaryYellow,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15),
-                                  ),
-                                  child: const Text('Finish'))
-                              : Text(selectedCall!.creationDate),
-                        ],
+                    : Item(
+                        title: title,
+                        description: description,
+                        sector: sector,
+                        whoCalled: whoCalled,
+                        role: role,
+                        time: creationDate,
+                        onPressed: finishCall
                       )),
           ),
         ],
       ),
     );
   }
-}
-
-Widget buildCallItem(String title, String subtitle, String time, String role) {
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 10),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            ),
-            Text(
-              subtitle,
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-            role == 'ADMIN'
-                ? Text(
-                    time,
-                    style: const TextStyle(color: Colors.grey, fontSize: 14),
-                  )
-                : const Text(''),
-          ],
-        ),
-      ],
-    ),
-  );
 }
