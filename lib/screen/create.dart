@@ -18,7 +18,6 @@ class _CreateState extends State<Create> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _sectorController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
 
   late String id;
   late String username;
@@ -34,9 +33,8 @@ class _CreateState extends State<Create> {
     String title = _titleController.text.trim();
     String description = _descriptionController.text.trim();
     String sector = _sectorController.text.trim();
-    String city = _cityController.text.trim();
 
-    if(title.isEmpty || description.isEmpty || sector.isEmpty || city.isEmpty){
+    if(title.isEmpty || description.isEmpty || sector.isEmpty){
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -51,11 +49,11 @@ class _CreateState extends State<Create> {
         ),
       );
     }else{
-      createCall(title, description, sector, city);
+      createCall(title, description, sector);
     }
   }
 
-  Future<void> createCall(String title, String description, String sector, String city) async{
+  Future<void> createCall(String title, String description, String sector) async{
     final url = Uri.parse('http://localhost:8080/user/create/$id');
 
     Map<String, String> headers = {
@@ -67,7 +65,6 @@ class _CreateState extends State<Create> {
       'description': description,
       'whoCalled': username,
       'sector': sector,
-      'city': city
     };
 
     String jsonBody = jsonEncode(body);
@@ -77,7 +74,7 @@ class _CreateState extends State<Create> {
       final response = await http.post(url, headers: headers, body: jsonBody);
       
       if(response.statusCode == 200){
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       }else{
         throw Exception('Internal server error ${response.statusCode}');
       }
@@ -95,55 +92,32 @@ class _CreateState extends State<Create> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              width: 700,
-              child: TextField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  label: const Text('Problem Name', style: TextStyle(color: Colors.white),),
-                  fillColor: greyColor,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 2.0,
-                      color: primaryYellow,
-                      style: BorderStyle.solid,
-                    ),
-                    borderRadius: BorderRadius.circular(5)
-                  ),
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w600
-                  ),
-                ),
-              )
-            ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              width: 700,
-              child: TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  label: const Text('Description', style: TextStyle(color: Colors.white),),
-                  fillColor: greyColor,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 2.0,
-                      color: primaryYellow,
-                      style: BorderStyle.solid,
-                    ),
-                    borderRadius: BorderRadius.circular(5)
-                  ),
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w600
-                  ),
-                ),
-              )
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 20, right: 20),
+                  width: 340,
+                  child: TextField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      label: const Text('Problem Name', style: TextStyle(color: Colors.white),),
+                      fillColor: greyColor,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          width: 2.0,
+                          color: primaryYellow,
+                          style: BorderStyle.solid,
+                        ),
+                        borderRadius: BorderRadius.circular(5)
+                      ),
+                      labelStyle: const TextStyle(
+                        fontWeight: FontWeight.w600
+                      ),
+                    ),
+                  )
+                ),
                 Container(
                   margin: const EdgeInsets.only(bottom: 20),
                   width: 340,
@@ -167,30 +141,30 @@ class _CreateState extends State<Create> {
                     ),
                   )
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20, left: 20),
-                  width: 340,
-                  child: TextField(
-                    controller: _cityController,
-                    decoration: InputDecoration(
-                      label: const Text('City', style: const TextStyle(color: Colors.white),),
-                      fillColor: greyColor,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          width: 2.0,
-                          color: primaryYellow,
-                          style: BorderStyle.solid,
-                        ),
-                        borderRadius: BorderRadius.circular(5)
-                      ),
-                      labelStyle: const TextStyle(
-                        fontWeight: FontWeight.w600
-                      ),
-                    ),
-                  )
-                ),
               ],
+            ),
+            Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              width: 700,
+              child: TextField(
+                controller: _descriptionController,
+                decoration: InputDecoration(
+                  label: const Text('Description', style: TextStyle(color: Colors.white),),
+                  fillColor: greyColor,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      width: 2.0,
+                      color: primaryYellow,
+                      style: BorderStyle.solid,
+                    ),
+                    borderRadius: BorderRadius.circular(5)
+                  ),
+                  labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w600
+                  ),
+                ),
+              )
             ),
             Center(
               child: Row(
