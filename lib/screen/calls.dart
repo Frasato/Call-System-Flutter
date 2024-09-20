@@ -35,6 +35,7 @@ class _CallsState extends State<Calls> {
   String title = '';
   String whoCalled = '';
   String userId = '';
+  String callStatus = '';
 
   List<Call> calls = [];
   bool isLoading = true;
@@ -70,6 +71,7 @@ class _CallsState extends State<Calls> {
               callData['id'],
               callData['whoCalled'],
               callData['sector'],
+              callData['callStatus']
             );
 
             fetchedCalls.add(call);
@@ -99,6 +101,7 @@ class _CallsState extends State<Calls> {
               callData['id'],
               callData['whoCalled'],
               callData['sector'],
+              callData['callStatus']
             );
 
             fetchedCalls.add(call);
@@ -177,6 +180,7 @@ class _CallsState extends State<Calls> {
       whoCalled = call.whoCalled;
       creationDate = call.creationDate;
       description = call.description;
+      callStatus = call.status;
     });
   }
 
@@ -193,6 +197,7 @@ class _CallsState extends State<Calls> {
         whoCalled = '';
         creationDate = '';
         description = '';
+        callStatus = '';
       });
     }
   }
@@ -274,7 +279,7 @@ class _CallsState extends State<Calls> {
             flex: 3,
             child: Container(
                 margin:
-                    const EdgeInsets.symmetric(vertical: 50, horizontal: 50),
+                    const EdgeInsets.only(left: 50, top: 50, right: 50, bottom: 30),
                 child: selectedCall == null
                     ? const Center(
                         child: Text(
@@ -289,6 +294,8 @@ class _CallsState extends State<Calls> {
                         whoCalled: whoCalled,
                         role: role,
                         time: creationDate,
+                        id: callId,
+                        callStatus: callStatus,
                         onPressed: finishCall
                       )),
           ),
