@@ -5,6 +5,7 @@ class Call {
   final String description;
   final String whoCalled;
   final String id;
+  final String status;
 
-  Call(this.title, this.creationDate, this.description, this.id, this.whoCalled, this.sector);
+  Call(this.title, this.creationDate, this.description, this.id, this.whoCalled, this.sector, this.status);
 }
