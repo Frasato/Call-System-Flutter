@@ -111,7 +111,7 @@ class _CreateState extends State<Create> {
                   rightValue: 20,
                 ),
                 InputField(
-                  controller: _titleController,
+                  controller: _sectorController,
                   icon: Icons.business_outlined,
                   label: 'Setor',
                   widthField: 340,
@@ -122,7 +122,7 @@ class _CreateState extends State<Create> {
               ],
             ),
             InputField(
-              controller: _titleController,
+              controller: _descriptionController,
               icon: Icons.short_text,
               label: 'Descrição',
               widthField: 700,
